@@ -30,6 +30,12 @@ export const callCommand = async (message: ICommand, sendResponse: (res: IRespon
   await handlers[message.command](message)
 }
 
+/**
+ * Client JS から `vscode.postMessage()` で呼び出し可能なコマンド (APIs) の定義.
+ *
+ * @param sendResponse Client JS へレスポンスを返送するためのコールバック関数.
+ * @returns handlers by command names.
+ */
 function getHandlers(sendResponse: (res: IResponse) => void)
 : { [key: string]: (message: Object) => Promise<void> } {
   return {
@@ -65,14 +71,14 @@ function getHandlers(sendResponse: (res: IResponse) => void)
 /**
  * Client JS から `vscode.postMessage()` で呼び出し可能なコマンドのファクトリ.
  */
-class CommandFactory {
-  _schema: z.ZodTypeAny
+class CommandFactory<ZodType extends z.ZodTypeAny> {
+  _schema: ZodType
 
-  constructor(schema: z.ZodTypeAny) {
+  constructor(schema: ZodType) {
     this._schema = schema
   }
 
-  static input(schema: z.ZodTypeAny) {
+  static input<ZodType extends z.ZodTypeAny>(schema: ZodType) {
     const obj = new CommandFactory(schema)
     return obj
   }
