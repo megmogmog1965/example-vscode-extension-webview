@@ -1,4 +1,4 @@
-import * as vscode from 'vscode'
+import { z } from 'zod'
 import { findFiles } from './findfiles'
 import { createFile } from './createfile'
 
@@ -20,24 +20,68 @@ interface IResponse {
  * @returns Promise<void>
  */
 export const callCommand = async (message: ICommand, sendResponse: (res: IResponse) => void)  => {
-  // @todo `zod` を使って型検査をした方がよい.
-  const handlers: { [key: string]: () => Promise<void> } = {
-    findfiles: async () => {
-      // process.
-      const files = await findFiles(message)
+  const handlers = getHandlers(sendResponse)
 
-      // send response.
-      sendResponse({
-        command: message.command,
-        result: files,
-      })
-    },
-
-    createfile: async () => {
-      await createFile(message)
-    },
+  if (!(message.command in handlers)) {
+    throw new Error(`Unknown message command: ${message.command}`)
   }
 
   // call handler.
-  await handlers[message.command]()
+  await handlers[message.command](message)
+}
+
+function getHandlers(sendResponse: (res: IResponse) => void)
+: { [key: string]: (message: Object) => Promise<void> } {
+  return {
+    findfiles: CommandFactory
+      .input(z.object({
+        command: z.literal('findfiles'),
+        params: z.object({
+          dir: z.string(),
+        }),
+      }))
+      .query(async (message) => {
+        // process.
+        const files = await findFiles(message)
+
+        // send response.
+        sendResponse({
+          command: message.command,
+          result: files,
+        })
+      }),
+
+    createfile: CommandFactory
+      .input(z.object({
+        command: z.literal('createfile'),
+        params: z.object({}),
+      }))
+      .query(async (message) => {
+        await createFile(message)
+      }),
+  }
+}
+
+/**
+ * Client JS から `vscode.postMessage()` で呼び出し可能なコマンドのファクトリ.
+ */
+class CommandFactory {
+  _schema: z.ZodTypeAny
+
+  constructor(schema: z.ZodTypeAny) {
+    this._schema = schema
+  }
+
+  static input(schema: z.ZodTypeAny) {
+    const obj = new CommandFactory(schema)
+    return obj
+  }
+
+  query(callback: (input: z.infer<typeof this._schema>) => Promise<void>)
+  : (message: Object) => Promise<void> {
+    return async (message: Object) => {
+      const validated = this._schema.parse(message)
+      return callback(validated)
+    }
+  }
 }
