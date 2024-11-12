@@ -3,8 +3,8 @@ import { findFiles } from './findfiles'
 import { createFile } from './createfile'
 
 interface ICommand {
-	command: string
-	params: any
+  command: string
+  params: any
 }
 
 interface IResponse {

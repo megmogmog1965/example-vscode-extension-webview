@@ -3,8 +3,8 @@ import path from 'path'
 import * as vscode from 'vscode'
 
 interface Command {
-	command: string
-	params: {
+  command: string
+  params: {
     dir: string
   }
 }
