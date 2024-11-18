@@ -1,9 +1,11 @@
-function registerEvents() {
+/**
+ * Extension へ送信される Events.
+ */
+function registerSendEvents() {
   const vscode = acquireVsCodeApi()  // eslint-disable-line no-undef
 
   const buttonFindfiles = document.getElementById('findfiles')
   const buttonCreatefile = document.getElementById('createfile')
-  const textarea = document.getElementById('files')
 
   // send findfiles command.
   buttonFindfiles.addEventListener('click', () => {
@@ -22,6 +24,13 @@ function registerEvents() {
       params: {},
     })
   })
+}
+
+/**
+ * Extension から受信する Events.
+ */
+function registerReceiveEvents() {
+  const textarea = document.getElementById('files')
 
   // Handle the message inside the webview
   window.addEventListener('message', event => {
@@ -39,5 +48,6 @@ function registerEvents() {
   })
 }
 
-// call it.
-registerEvents()
+// register events.
+registerSendEvents()
+registerReceiveEvents()
