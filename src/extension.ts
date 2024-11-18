@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { callCommand } from './command'
+import { commandRouter } from './command/_app'
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       // handle ALL messages from the webview.
       panel.webview.onDidReceiveMessage(
-        message => callCommand(message as { command: string, params: object }, res => panel.webview.postMessage(res)),
+        message => commandRouter(message as { command: string, params: object }, res => panel.webview.postMessage(res)),
         undefined,
         context.subscriptions,
       )
