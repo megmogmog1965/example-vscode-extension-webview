@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       // handle ALL messages from the webview.
       panel.webview.onDidReceiveMessage(
-        message => callCommand(message, res => panel.webview.postMessage(res)),
+        message => callCommand(message as { command: string, params: object }, res => panel.webview.postMessage(res)),
         undefined,
         context.subscriptions,
       )
@@ -51,17 +51,17 @@ function getWebviewContent(cspSource: string, gif: vscode.Uri, script: vscode.Ur
       content="default-src 'none'; img-src ${cspSource} https:; script-src ${cspSource}; style-src ${cspSource};"
     />
     <title>Cat Coding</title>
-    <link rel="stylesheet" href="${css}">
+    <link rel="stylesheet" href="${css.toString()}">
 </head>
 <body>
-    <img src="${gif}" width="300" />
+    <img src="${gif.toString()}" width="300" />
 
     <button id="findfiles">List files</button>
     <textarea id="files"></textarea>
 
     <button id="createfile">Create &quot;hello.txt&quot;</button>
 
-    <script src="${script}"></script>
+    <script src="${script.toString()}"></script>
 </body>
 </html>`
 }

@@ -1,5 +1,5 @@
 function registerEvents() {
-  const vscode = acquireVsCodeApi()
+  const vscode = acquireVsCodeApi()  // eslint-disable-line no-undef
 
   const buttonFindfiles = document.getElementById('findfiles')
   const buttonCreatefile = document.getElementById('createfile')

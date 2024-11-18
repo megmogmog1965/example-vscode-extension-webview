@@ -4,12 +4,12 @@ import { createFile } from './createfile'
 
 interface ICommand {
   command: string
-  params: any
+  params: object
 }
 
 interface IResponse {
   command: string
-  result: any
+  result: any  // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**

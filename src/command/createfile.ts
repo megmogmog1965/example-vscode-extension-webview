@@ -4,7 +4,7 @@ import * as vscode from 'vscode'
 
 interface Command {
   command: string
-  params: { }
+  params: object
 }
 
 /**
@@ -13,7 +13,7 @@ interface Command {
  * @param command command=`createfile`
  * @returns Promise<void>
  */
-export async function createFile(command: Command) {
+export async function createFile(command: Command) {  // eslint-disable-line @typescript-eslint/no-unused-vars
   if (vscode.workspace.workspaceFolders === undefined) {
     return []
   }
