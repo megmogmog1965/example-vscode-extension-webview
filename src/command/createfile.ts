@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs'  // FIXME: 本来は `vscode.workspace.fs` を使うべき.
 import path from 'path'
 import * as vscode from 'vscode'
 
@@ -20,6 +20,7 @@ export async function createFile(command: Command) {  // eslint-disable-line @ty
 
   const rootDir = vscode.workspace.workspaceFolders[0].uri.fsPath
 
+  // FIXME: 本来は `vscode.workspace.fs` を使うべき.
   const filePath = path.join(rootDir, 'hello.txt')
   fs.writeFileSync(filePath, 'Hello, world!')
 }
